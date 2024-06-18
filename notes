@@ -1,1 +1,5 @@
-ls -ltr ../Siddharta2_X_Nov_19_shared/*madx
+#2024jun18 DAFNE model copied from files provided by C.Milardi in 2021
+#ls -ltr ../Siddharta2_X_Nov_19_shared/*madx
+
+# main file
+job.chrom.madx
