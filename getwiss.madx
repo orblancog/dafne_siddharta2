@@ -1,0 +1,18 @@
+! twiss
+call, file="twiss_select.madx";
+twiss,chrom,
+!betx=11.1,bety=1,dx=0,
+file="twiss.tfs";
+
+! ptc twiss
+ptc_create_universe;
+ptc_create_layout,time=false,model=2,method=6,nst=10;
+!ptc_create_layout,model=2,method=6,exact;
+select, flag=ptc_twiss, clear;
+select, flag=ptc_twiss, column=name,s,l,beta11,beta22,disp1,disp1p;
+ptc_twiss,icase=56, no=4, file="ptctwiss.tfs",summary_table;
+ptc_end;
+
+!value, qdfudge,qfrfudge, qflfudge;
+!value, dd23;
+!stop;

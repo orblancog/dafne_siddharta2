@@ -1,0 +1,160 @@
+! ! ptc track
+! ! ! The cavity parameters
+
+! ! RFcON       := 1.5;//cavity back to 12MV
+! ! RFcLAG      := -0.069;
+! ! RFcFREQ     := 492.241590883261;
+! ! RFcHARMON   := 10510;
+!ca1ON := 1;
+! freqca1 := 1.200e3;!MHz
+! lagca1  := 0.0;
+! voltca1 := ca1ON*2.0e2;
+! CA1 : RFCAVITY, FREQ:= FREQCA1, LAG:= LAGCA1, VOLT:= VOLTCA1, apertype=circle, aperture={1},NO_CAVITY_TOTALPATH;
+! seqedit, sequence=cellm;
+! install, element=ca1, at = 0;
+! flatten;
+! endedit;
+! use, sequence=cellm;
+!stop;
+
+! NO purpose tracking in MAD-X
+system, "rm -f trackEND trackSTART trackEXTSEPTUM";
+! !set parameters
+! track, onepass=true,aperture=true,onetable,recloss,dump;
+!call, file="observe.madx";!observe;!set observation points
+! !set particles
+! !start, X=0,PX=0,Y=0,PY=0,T=0,PT=-0.10;
+! call,file="madxInrays.madx";
+! run,turns=1,maxaper={Rpipe,AngMax,Rpipe,AngMax,1.0,0.1};!run track
+! !dynap;
+! endtrack;
+! write, table=trackloss, file="trackloss";!write lost particles
+! ! End of NO purpose tracking in MAD-X
+
+! beggining track
+! NO purpuse tracking in PTC
+!stop;
+!set parameters
+!system, "rm -f track*";
+ptc_create_universe;
+ptc_create_layout,model=2,method=6,exact;
+!time=false,
+!exact,
+!resplit,even
+!;
+!ptc_observe, place="IP.1";
+!ptc_observe, place=target;
+!ptc_observe, place=newstart;
+!ptc_observe, place=extseptum;
+call, file="observe.madx";!observe;!set observation points
+!set particles
+!ptc_start, X=0, PX=0, Y=0, PY=0, T=0, PT=0;
+!ptc_start, X=0, PX=0, Y=0, PY=0, T=0, PT=0.1;
+!ptc_start, X=0, PX=0, Y=0, PY=0, T=0, PT=0.05;
+!ptc_start, X=0, PX=0, Y=0, PY=0, T=0, PT=0.02;
+!ptc_start, X=0, PX=0, Y=0, PY=0, T=0, PT=0.01;
+
+
+
+! energy
+!deltaestep:=1.e-3;
+!deltaemax:=0.02;
+!deltaemin := -1*deltaemax;
+deltaepart:= deltaemin;
+ipart = 0;
+while (deltaepart < deltaemax + 1e-2*deltaestep){
+  ptc_start, X=-1e-6, PX=-1e-3, Y=-1e-6, PY=1e-6, T=0.00, PT=deltaepart;
+  deltaepart = deltaepart + deltaestep;
+  ipart = ipart+1;
+};
+
+
+/*
+! time
+deltatstep:=1.e-3;
+deltatpart:=-0.01;
+ipart = 0;
+while (deltatpart <=0.01){
+  ptc_start, X=-1e-6, PX=0, Y=-1e-6, PY=0, T=deltatpart, PT=0;
+  deltatpart = deltatpart + deltatstep;
+  ipart = ipart+1;
+};
+*/
+
+/*
+! x-plane
+deltaxstep:=  1e-3;
+deltaxpart:= -10.e-3;
+ipart = 0;
+while (deltaxpart <=10.e-3){
+!  ptc_start, X=deltaxpart-0.2*0.1, PX=0, Y=-1e-6, PY=0, T=0, PT=-0.2;
+  ptc_start, X=deltaxpart,           PX=0, Y=-1e-6, PY=0, T=0, PT= 0.00;
+!  ptc_start, X=deltaxpart+0.2*0.1, PX=0, Y=-1e-6, PY=0, T=0, PT= 0.2;
+
+  deltaxpart = deltaxpart + deltaxstep;
+  ipart = ipart+1;
+};
+*/
+
+
+/*! px-plane
+deltapxstep:=  1e-3;
+deltapxpart:=  -10.e-3;
+ipart = 0;
+while (deltapxpart <=10.e-3){
+!  ptc_start, X=deltaxpart-0.2*0.1, PX=0, Y=-1e-6, PY=0, T=0, PT=-0.2;
+  ptc_start, X=1e-9,           PX=deltapxpart, Y=-1e-6, PY=0, T=0, PT= 0.00;
+!  ptc_start, X=deltaxpart+0.2*0.1, PX=0, Y=-1e-6, PY=0, T=0, PT= 0.2;
+
+  deltapxpart = deltapxpart + deltapxstep;
+  ipart = ipart+1;
+};
+*/
+
+
+/*
+! y-plane
+deltaystep:=  1e-3;
+deltaypart:= -10e-3;
+ipart = 0;
+while (deltaypart <=10e-3){
+  ptc_start, X=1e-6, PX=0, Y=deltaypart, PY=0, T=0, PT= 0.0;
+!  ptc_start, X=1e-6, PX=0, Y=deltaypart, PY=0, T=0, PT= 0.1;
+!  ptc_start, X=1e-6, PX=0, Y=deltaypart, PY=0, T=0, PT=-0.1;
+  deltaypart = deltaypart + deltaystep;
+  ipart = ipart+1;
+};
+*/
+
+!ptc_start, X=1e-6, PX=1e-6, Y=1e-3, PY=1e-6, T=1e-6, PT=1e-9;
+!ptc_start, X=1e-6, PX=1e-6, Y=1e-3, PY=1e-6, T=1e-6, PT=0.01;
+!ptc_start, X=1e-6, PX=1e-6, Y=1e-3, PY=1e-6, T=1e-6, PT=-0.01;
+!call, file="madxInrays.madx";
+!run
+!ptc_track, icase=6,element_by_element,turns=1,dump,onetable,norm_no=1,file;!,
+!norm_no is order of the normal form : 1=linear, 2 ...!
+!ptc_setcavities;
+!ptc_setswitch,debuglevel=1,maxacceleration=false,totalpath=false,
+!	radiation=true,fringe=false,time=true,nocavity=false;
+!nturns:=10;
+ptc_track, icase=6,turns=nturns,dump,onetable,element_by_element,
+!maxaper={Rpipe,AngMax,Rpipe,AngMax,1,1},
+maxaper={1e0,1e0,1e0,1e0,100e0,100e0},
+! the t and pt vars do not change anything
+!norm_no=4,
+radiation,
+!radiation_model1,radiation_energy_loss,
+file;
+
+!ptc_observe,place=#e;
+!ptc_trackline, turns=1,onetable,file;
+ptc_track_end;
+ptc_end;
+!end of NO purpose tracking in PTC
+
+! split tracking results inf plot friendly files
+system, "./getobservedata trackone";
+!system, "mv trackLOW_EMIT_RING\$END trackEND";
+! plot the phase  space
+!system, 'root -x -l -q "DrawPhaseSpace.C(\"START\")" ';
+!system, 'root -x -l -q "DrawPhaseSpace.C(\"END\")" ';

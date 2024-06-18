@@ -1,0 +1,14 @@
+! ~/mad/tools/survey_select.madx
+
+select,flag=survey,clear;
+
+if( survey_select_all==1 )
+{
+  select,flag=survey,column=name,s,l,x,y,z,theta,phi,psi,globaltilt,slot_id,assembly_id,mech_sep,v_pos; ! default selection for survey
+}
+else
+{
+  select,flag=survey,column=s,x,y,z,theta,phi,psi; ! MDISim    for flat machine phi and psi still zero
+}
+
+! survey, table=survey, x0=0,y0=0,z0=0,theta0=0,phi0=0,psi0=0,file=lep_survey.tfs,sequence=lep;

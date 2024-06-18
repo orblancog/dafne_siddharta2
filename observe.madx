@@ -1,0 +1,24 @@
+ptc_observe, place=extseptum;
+/*
+ptc_observe, place= EXTKICK  ; 
+ptc_observe, place= L6       ; 
+ptc_observe, place= SDIP  ; 
+ptc_observe, place= B1       ; 
+ptc_observe, place= SDIP[2]     ; 
+ptc_observe, place= L5       ; 
+ptc_observe, place= QF2      ; 
+ptc_observe, place= L4       ; 
+ptc_observe, place= QD1      ; 
+ptc_observe, place= L3       ; 
+ptc_observe, place= SD       ; 
+ptc_observe, place= L3[2]       ; 
+ptc_observe, place= QF1      ; 
+ptc_observe, place= L2B      ; 
+ptc_observe, place= SF       ; 
+ptc_observe, place= L2A      ; 
+ptc_observe, place= SDIP[3]  ; 
+ptc_observe, place= B1       ; 
+ptc_observe, place= SDIP[4]  ; 
+ptc_observe, place= L1       ; 
+ptc_observe, place= EXTSEPTUM;
+*/

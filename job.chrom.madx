@@ -1,0 +1,80 @@
+mbeam = 0;
+pbeam = 1;
+if ( mbeam == 1 ){
+   call, file= "mubeam.madx";
+   brhofactor := 1;
+}
+if ( pbeam == 1 ){
+   call, file= "pbeam.madx";
+   brhofactor := 2;
+}
+
+value, beam->brho;
+!stop;
+
+!! beam pipe
+!Rbeampipe := 10e-3;
+!! first element
+!ipa1: marker, apertype=circle, aperture={Rbeampipe};
+!! target
+!ltar =  100e-3;
+!TARG: collimator, L=ltar,apertype=circle, aperture={Rbeampipe};!, comments="Be";
+
+! some usefull values
+grad := beam->brho*table(twiss,k1l)/table(twiss,L);
+grads := beam->brho*table(twiss,k2l);
+grado := beam->brho*table(twiss,k3l);
+gradd := beam->brho*table(twiss,k4l);
+grade := beam->brho*table(twiss,k5l);
+natchromx := table(twiss,k1l)*table(twiss,betx);
+natchromy := table(twiss,k1l)*table(twiss,bety);
+sx_mm := sqrt( beam->ex*table(twiss,betx) + ( table(twiss,dx)*beam->sige )^2 )*1e3;
+sy_mm := sqrt( beam->ey*table(twiss,bety) + ( table(twiss,dy)*beam->sige )^2 )*1e3;
+twentysx_mm := 20*sqrt( beam->ex*table(twiss,betx) + ( table(twiss,dx)*beam->sige )^2 )*1e3;
+twentysy_mm := 20*sqrt( beam->ey*table(twiss,bety) + ( table(twiss,dy)*beam->sige )^2 )*1e3;
+SBfield := beam->brho*table(twiss,angle)/table(twiss,L);
+
+
+betx0 = 5;
+alfx0 = 0;
+bety0 = betx0;
+alfy0 = alfx0;
+
+! adding different beta* for the muon beam
+betx0mu = 0.5;
+alfx0mu = 0;
+bety0mu = betx0mu;
+alfy0mu = alfx0mu;
+betx0pos = 2;
+alfx0pos = 0;
+bety0pos = betx0pos;
+alfy0pos = alfx0pos;
+
+
+call, file = "DAFNE_today.seq";
+use, sequence=whole;
+
+call, file="eoffset.madx";
+
+option, -warn, -info, -echo;
+! !brhofactor := 2;
+! select, flag=twiss, clear;
+! if (pbeam == 0 && mbeam == 1){
+! select, flag=twiss, column=name,keyword,s,l,betx,bety,alfx,alfy,dx,k1l;!,grad,natchromx,natchromy;
+! }else{
+! select, flag=twiss, column=name,keyword,s,l,betx,bety,alfx,alfy,dx,k1l;!,angle,natchromx,natchromy;
+! }
+! twiss, deltap=eoffset,chrom,
+! !betx=betx0mu, bety=bety0mu, dx=0,
+! file="twiss_chrom.tfs";
+
+  ptc_create_universe;
+  ptc_create_layout,time=false,model=2,method=6;
+!  ptc_create_layout,model=2,method=6,exact;
+  select, flag=ptc_twiss, clear;
+  select, flag=ptc_twiss, column=name,keyword,s,l,beta11,beta22,alfa11,alfa22,disp1,k1l;!,disp1p;
+  ptc_twiss,deltap=eoffset,icase=56, no=4, deltap_dependency=true, file="chrom_ptc_twiss.tfs",summary_table;
+  ptc_end;
+
+
+stop;

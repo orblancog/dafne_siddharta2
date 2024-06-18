@@ -1,0 +1,170 @@
+ TITLE, "Positroni:  Modello  per Siddharta_2 Spt 2019";
+ option, echo, warn, -info;
+! set precision
+!set,format="-18s","11.3g";  ! my standard compact format
+set,format="-18s","11.9g";  ! my standard compact format
+
+! calculating fields and others
+call, file="myvars.madx";
+
+! parameters
+!call, file="p_siddharta2_Spt19.par";
+call, file="p_siddharta2_20feb20.par";
+
+! the beam
+call, file = "pbeam.madx";
+
+
+! the currents
+! note : the model uses the positron ring names.
+!           To calculate the parameters for the electron ring
+!           I need to change the names inside the cur file
+!call, FILE = "eMRe_20191106_2352_notte_1200_mAh.cur";
+!call, FILE = "cur/pMRp_20191126_2312_580mA.madx";
+!call, FILE = "cur/pMRp_20191128_1539_optimized3.madx";
+!call, FILE = "cur/pMRp_20191129_1556_misura_beta.madx";
+!call, FILE = "cur/pMRp_20191122_1428_misureBeta_linear.cur";
+!call, FILE = "cur/pMRp_20191130_2342_perlanotte.madx";
+!call, FILE = "cur/pMRp_20191219_1654_Misure_beta_linear.madx";
+!call, FILE = "cur/pMRp_20200217_1227_dopo_wiggler.madx";
+!call, file = "cur/Currents_optics_forCrabSext_20feb20.dat";
+!call, file = "cur/eMRe_20200220_1341_prima_di_modifica_QFs.madx";
+!call, file = "cur/eMRe_20200220_1427__1344_prova_nuove_cur_02.madx";
+!call, file = "cur/pMRp_20200220_1721_prova_cur_nuova_ottica_01.madx";
+!call, file = "cur/pMRp_20200221_1836_opt_02.madx";
+!call, file = "cur/pMRp_20200222_1635_dopo_errore_cvvps104.madx";
+! sextupoles test MRe
+!call, file = "cur/eMRe_20200226_1858_SXP4_for_chromy.madx";
+!call, file = "cur/eMRe_20200226_1913_SXP_5_for_chromy.madx";
+!call, file = "cur/eMRe_20200226_1922_SXP_6_for_positive_chrom.madx";
+call, file = "cur/eMRe_20200228_1808_lifetime_1200s.madx";
+! sextupoles test MRp
+!call, file = "cur/pMRp_20200225_1145_yp_bump_removed_sxp_off_sol_off.madx";
+!call, file = "cur/pMRp_20200225_1251_towards_correct_dx_at_IP1.madx";
+!call, file = "cur/pMRp_20200225_1312_towards_correct_dx_IP1_01.madx";
+!call, file = "cur/pMRp_20200225_1359_misura_chrom_sxp_on.madx";
+!call, file = "cur/pMRp_20200225_1430_SXP_1.madx";
+!call, file = "cur/pMRp_20200225_1430_SXP_2.madx";
+!call, file = "cur/pMRp_20200225_1458_SXP_3.madx";
+!call, file = "cur/pMRp_20200225_1506_test_Hsteering.madx";
+
+!stop;
+	
+! the ring elements
+ CALL, FILE="bendx_siddarta1.d"; 
+ CALL, FILE="WiggNew.d";           ! wiggler upgrade 2010
+ CALL, FILE="kick.d";
+ CALL, FILE="bpm_19.d";
+ CALL, FILE="drift_siddharta2_Nov_19.d";
+ CALL, FILE="chv.d";
+ CALL, FILE="sxp_siddarta_Jan_09.d";
+ CALL, FILE="skew.d";
+ CALL, FILE="qua_siddarta_08.d";
+ CALL, FILE="ir1_siddharta2_Spt19.d";
+ CALL, FILE="ir2_RCR_May19.d";
+ CALL, FILE="ring_siddharta2_Chalf_Nov_19.d";
+ ! the sequence
+ call, file="sequence.madx";
+
+! resmatch
+!call, file="resmatch.madx";
+! match
+!call, file="match.madx";
+!stop;
+
+call, file="sequence.madx";
+use, period=whole;
+
+! twiss and survey
+twiss_select_MDISim := 1;
+twiss_select_rmat   := 1;
+survey_select_all   := 0;
+call, file="survey_select.madx";
+survey, file="survey.tfs";
+call, FILE="getwiss.madx";
+
+
+!zgoubi
+select, flag=twiss, column = l, angle, k1l,k2l,k3l,k4l, tilt, e1,e2, h1,h2, s, alfx,betx, alfy,bety, x,y, Dx,Dpx, Dy,Dpy, mux,muy, hkick, vkick,ksi,name, keyword;
+twiss, file="madzg.in";
+
+
+! plots
+!plot, interpolate, colour=100, haxis=s, hmax=4.0,  vaxis1=betx,bety, vaxis2=dx;
+!plot, interpolate, colour=100, haxis=s, hmax=4.0,  vaxis1=wx,wy, vaxis2=ddx,ddy;
+!plot, interpolate, colour=100, haxis=s, hmax=4.0,  vaxis1=ddx,ddy, vaxis2=dx;
+!plot, colour=100, haxis=s, hmax=100, vaxis1=betx,bety, vaxis2=dx;
+plot, colour=100, haxis=s, hmin=0,hmax=100, vaxis1=betx,bety, vaxis2=dx;
+plot, colour=100, haxis=s, hmax=100, vaxis1=wx,wy, vaxis2=ddx;
+!plot, interpolate, noversion,colour=100, haxis=s, hmax=140, vaxis1=sx_mm,sy_mm;
+!plot, interpolate, noversion,colour=100, haxis=s, hmax=140, vaxis1=nsx_mm,nsy_mm;
+!stop;
+
+
+! rf cavity params
+ca1ON := 1;
+harmonca1 := 120;
+lagca1  := 0.5-0.01086;!0.5-0.565;
+voltca1 := ca1ON*0.130;
+!emit,deltap=0;
+!stop;
+!touschek, file="touschek.tfs",tolerance=1e-7;
+save, sequence=whole, file="pMRp.seq";
+call, file="pMRp.seq";
+use, sequence=whole;
+
+
+seqedit, sequence=whole;
+flatten;
+cycle, start=xtal;
+flatten;
+endedit;
+
+
+save, sequence=whole, file="pMRp_newstart.seq";
+call, file="pMRp_newstart.seq";
+use, sequence=whole;
+!stop;
+
+! ptc track
+! tracking turns
+nturns := 100;
+deltaemax := -0.01; !0.70;
+deltaemin := -0.01;!-deltaemax;
+deltaestep:=  0.01;
+!stop;
+call, file="ptc_track.madx";
+
+
+
+
+stop;
+
+
+! tracking turns
+nturns := 1;
+deltaemax:=0.01; !0.70;
+deltaemin := -deltaemax;
+deltaestep:=2.e-4;
+
+!emit;
+!stop;
+call, file="ptc_track.madx";
+stop;
+
+save, sequence=whole, file="dafne.sidd2.whole.seq";
+call, file="dafne.sidd2.whole.seq";
+use, sequence=whole;
+
+seqedit,sequence=whole;
+flatten;
+cycle, start=ip1;
+flatten;
+endedit;
+
+
+! outputs 
+set,format="-18s","11.12g";  ! my standard compact format
+save, sequence = whole, file="DAFNE_today.seq";
+
+stop;

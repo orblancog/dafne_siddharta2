@@ -1,0 +1,9 @@
+ms1:marker;
+mid2:marker;
+!wholeip1:LINE=(SIDDARTAshort,PS1,ms1,PS2,finudashort,IP2,
+!                                          finudalong,pl2,mid2,pl1,siddartalong,IP1);
+
+rfcav: rfcavity,l:=lcav/2,volt:=voltca1/2,lag:=lagca1,harmon:=harmonca1,no_cavity_totalpath;
+! BEAM,particle=electron,energy=0.51,charge := 2.E+10,radiate= false;
+whole:LINE=(mid2,pl1,siddartalong,IP1,SIDDARTAshort,PS1,ms1,PS2,finudashort,IP2,finudalong,pl2);
+! use, period=wholeip1;

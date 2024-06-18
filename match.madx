@@ -1,0 +1,272 @@
+/*
+! fix twiss
+option , -echo, -warn;
+call, file="tune.madx";
+fixtwiss : macro={
+  call, file="cell.madx";
+!  use, sequence=acc4;
+!  use, sequence=cc4;
+!  use, sequence=cc5;
+!  use, sequence=acc5;
+!  use, sequence=acc6;
+!  use, sequence=acc7;
+!  use, sequence=acc9;
+!  use, sequence=acc10;
+!  use, sequence=acc13;
+!  use, sequence=acc14;
+!  use, sequence=acc16;
+  use, sequence=acc17;
+  ! madx twiss
+  twiss, chrom;!,betx=betx0, bety=bety0;
+  ! ptc twiss
+!  ptc_create_universe;
+!  ptc_create_layout,time=false,model=2,method=6,nst=10;
+!  select, flag=ptc_twiss, clear;
+!  select, flag=ptc_twiss, column=name,s,l,beta11,beta22,disp1,disp1p;
+!  ptc_twiss,icase=56, no=4, file="ptctwiss.tfs",summary_table;
+!  ptc_end;
+!  value, table(ptc_twiss_summary,dq1);
+!  value, table(ptc_twiss_summary,dq2);
+!  value, table(ptc_twiss_summary,alpha_c);
+
+};
+
+match, use_macro;
+!vary, name=ld01, step=1e-3;
+!vary, name=ld02, step=1e-3;
+vary, name=ksb1, step=1e-3;
+vary, name=ksb2, step=1e-3;
+vary, name=dang, step=1e-3;
+!vary, name=asb2, step=1e-3;
+!vary, name=asb1, step=1e-3;
+!vary, name=msb1->e1, step=1e-3;
+!vary, name=msb1->e2, step=1e-3;
+!vary, name=msb2->e1, step=1e-3;
+!vary, name=msb2->e2, step=1e-3;
+use_macro, name=fixtwiss;
+!constraint, expr=abs(table(twiss,tend,betx)-betx0)*1e3<1;
+!constraint, expr=abs(table(twiss,tend,bety)-bety0)*1e3<1;
+!constraint, expr=abs(table(summ,q1)-tunex)*1e3<1;
+!constraint, expr=abs(table(summ,q1)-tunex)*1e3<1;
+constraint, expr=abs(table(summ,alfa)-0.5e-4)*1e8<1;
+
+!constraint, expr=abs(abs((2 * msb1->angle + msb2->angle)) * 50  -twopi)*1e5<1;
+!constraint, expr=abs(abs((2 * msb1->angle + msb2->angle)) * 25  -twopi)*1e7<1;
+!constraint, expr=abs(table(summ,alfa)-1e-4)*1e3<1;
+!constraint, expr=abs(table(ptc_twiss_summary,alpha_c)-1e-3)*1e4<1;
+!constraint, expr=abs(asb1-asb2)*1e3<1;
+constraint, expr=abs(table(summ,dq1)+5.000)*1e3<1;
+constraint, expr=abs(table(summ,dq2)+5.000)*1e3<1;
+!constraint, expr=abs(table(twiss,cend,alfx)-0.0)*1e3<1;
+!constraint, expr=abs(table(twiss,cend,alfy)-0.0)*1e3<1;
+constraint, expr=abs(table(twiss,cend,dx)+0.1)*1e2<1;
+
+!constraint, expr=abs(table(ptc_twiss_summary,dq1)+10.000)*1e1<1;
+!constraint, expr=abs(table(ptc_twiss_summary,dq2)+10.000)*1e1<1;
+!constraint, expr=abs(table(ptc_twiss,tend,dx)-0.001)*1e5<1;
+!constraint, expr=abs(table(twiss,cend,wx)-0.0)*1e6<1;
+!constraint, expr=abs(table(twiss,cend,wy)-0.0)*1e6<1;
+simplex, calls=1000, tolerance=1e-7;
+endmatch;
+
+
+!value, lbq01, lbq02, lbq03;
+!value, ld01, ld02, ld03, ld04;
+return;
+*/
+
+
+
+
+/*
+! match mom.comp.factor
+use, sequence=acc4;
+
+match, sequence=acc4;
+vary, name=ksb1, step=1e-3;
+vary, name=ksb2, step=1e-3;
+global, sequence=cellcc, alfa=0;
+simplex, calls=1000, tolerance=1e-11;
+endmatch;
+value, ksb1, ksb2;
+stop;
+*/
+
+/*
+! match chrom
+call, file="cell.madx";
+!use, sequence=acc5;
+!use, sequence=acc7;
+!use, sequence=acc9;
+!use, sequence=acc10;
+!use, sequence=acc12;
+use, sequence=acc14;
+
+match, sequence=acc14;
+vary, name=ssb1, step=1e-3;
+vary, name=ssb2, step=1e-3;
+global, sequence=acc14, dq1=0;
+global, sequence=acc14, dq2=0;
+constraint, sequence=acc14, range=cend, 
+simplex, calls=1000, tolerance=1e-7;
+endmatch;
+value, ssb1, ssb2;
+return;
+!stop;
+*/
+
+
+
+
+
+/*
+CSPL100 = +0.000   ;
+CSPL101 = +30.000  ;
+CSPL102 = +50.000  ;
+CSPL103 = -26.000  ;
+CSPL104 = -0.000   ;
+CSPS101 = +0.000   ;
+CSPS102 = -31.000  ;
+CSPS201 = -0.000   ;
+CSPS202 = +80.000  ;
+CSPS203 = -33.000  ;
+CSPL202 = -26.000  ;
+CSPL203 = +25.000  ;
+CSPL204 = +32.000  ;
+*/
+
+
+!!! chrom
+option , -echo, -warn;
+fixsext1 : macro={
+  call, file = "sequence.madx";
+  use, sequence=whole;
+!  twiss, chrom;
+    ! ptc twiss
+ ptc_create_universe;
+ ptc_create_layout,time=false,model=2,method=6,nst=10;
+ select, flag=ptc_twiss, clear;
+ select, flag=ptc_twiss, column=name,s,l,beta11,beta22,disp1,disp1p;
+ ptc_twiss,icase=56, no=4, file="ptctwiss.tfs",summary_table;
+ ptc_end;
+  value, table(ptc_twiss_summary,dq1);
+  value, table(ptc_twiss_summary,dq2);
+  value, table(ptc_twiss_summary,alpha_c);
+  value, table(ptc_twiss_summary,alpha_c_p);
+!  value, table(ptc_twiss_summary,alpha_c_p2);
+!  value, table(ptc_twiss_summary,alpha_c_p3);
+}
+match, use_macro;
+!!vary, name=CSPL100, step=1e-3;
+!vary, name=CSPL101, step=1e-3;
+vary, name=CSPL102, step=1e-3;
+vary, name=CSPL103, step=1e-3;
+!!vary, name=CSPL104, step=1e-3;
+!!vary, name=CSPS101, step=1e-3;
+vary, name=CSPS102, step=1e-3;
+!!vary, name=CSPS103, step=1e-3;
+!!vary, name=CSPS201, step=1e-3;
+vary, name=CSPS202, step=1e-3;
+vary, name=CSPS203, step=1e-3;
+vary, name=CSPL202, step=1e-3;
+vary, name=CSPL203, step=1e-3;
+!vary, name=CSPL204, step=1e-3;
+use_macro, name=fixsext1;
+!constraint, expr=abs(abs(table(summ,q1))-tunex)*1e8<1;
+!constraint, expr=abs(abs(table(summ,q2))- tuney)*1e8<1;
+!constraint, expr=abs(abs(table(summ,dq1))-0)*1e3<1;
+!constraint, expr=abs(abs(table(summ,dq2))-0)*1e3<1;
+
+constraint, expr=abs(abs(table(ptc_twiss_summary,dq1)-1)-0.1)*1e1     <1;
+constraint, expr=abs(abs(table(ptc_twiss_summary,dq2)-1.5)-0.1)*1e1   <1;
+constraint, expr=abs(abs(table(ptc_twiss_summary,alpha_c_p))-0.02)*1e2<1;
+!constraint, expr=abs(table(ptc_twiss_summary,alpha_c_p2))*1e12<1;
+!constraint, expr=abs(table(ptc_twiss_summary,alpha_c_p3))*1e12<1;
+!constraint, expr=abs(abs(table(twiss,tend,ddx)) - 0)*1e3<1;
+simplex, calls=200, tolerance=1e-4;
+endmatch;
+value, CSPL100;
+value, CSPL101;
+value, CSPL102;
+value, CSPL103;
+value, CSPL104;
+value, CSPS101;
+value, CSPS102;
+value, CSPS103;
+value, CSPS201;
+value, CSPS202;
+value, CSPS203;
+value, CSPL202;
+value, CSPL203;
+value, CSPL204;
+return;
+
+
+!!! bump
+
+
+option , -echo, -warn;
+fixsext1 : macro={
+  call, file = "sequence.madx";
+  ivvps105 := 0.5;
+  use, sequence=whole, range=chvps105/chvps201;
+  system, "rm -rf tmp";
+  select, flag=sectortable,clear;
+  select, flag=sectortable, pattern="chvps201", column=name,keyword,s,l,r11,r12;
+  select, flag=sectormap, pattern="chvps201", column=name,keyword,s,l,R11,r12;
+  twiss, chrom, sectormap;
+  value, table(sectortable, chvps201, k1);
+  value, table(sectortable, chvps201, k2);
+    ! ptc twiss
+! ptc_create_universe;
+! ptc_create_layout,time=false,model=2,method=6,nst=10;
+! ptc_start, X=-1e-6, PX=1e-6, Y=-1e-6, PY=1e-6, T=0.00, PT=0;
+! ptc_track, icase=6,turns=nturns,dump,onetable,element_by_element,
+!maxaper={Rpipe,AngMax,Rpipe,AngMax,1,1},
+!maxaper={1e0,1e0,1e0,1e0,0.5e1,0.5e1},
+! the t and pt vars do not change anything
+!norm_no=4,
+!file;
+!ptc_track_end;
+!ptc_end;
+!value table(ptc_track,#s,y);
+!system, "./getobservedata trackone";
+}
+match, use_macro;
+!vary, name=ivvps105, step=1e-3;
+vary, name=ivvps106, step=1e-3;
+vary, name=ivvps201, step=1e-3;
+use_macro, name=fixsext1;
+constraint, expr=abs(abs(table(sectortable,chvps201,r11))-1)*1e1<1;
+constraint, expr=abs(abs(table(sectortable,chvps201,r12))-0)*1e1<1;
+!constraint, expr=abs(abs(table(summ,q2))- tuney)*1e8<1;
+!constraint, expr=abs(abs(table(summ,dq1))-0)*1e3<1;
+!constraint, expr=abs(abs(table(summ,dq2))-0)*1e3<1;
+
+!constraint, expr=abs(abs(table(ptc_twiss_summary,dq1)-2)-0.1)*1e1	<1;
+!constraint, expr=abs(abs(table(ptc_twiss_summary,dq2)-2)-0.1)*1e1  <1;
+!constraint, expr=abs(abs(table(ptc_twiss_summary,alpha_c_p))-0.02)*1e2<1;
+!constraint, expr=abs(table(ptc_twiss_summary,alpha_c_p2))*1e12<1;
+!constraint, expr=abs(table(ptc_twiss_summary,alpha_c_p3))*1e12<1;
+!constraint, expr=abs(abs(table(twiss,tend,ddx)) - 0)*1e3<1;
+simplex, calls=200, tolerance=1e-4;
+endmatch;
+stop;
+value, CSPL100;
+value, CSPL101;
+value, CSPL102;
+value, CSPL103;
+value, CSPL104;
+value, CSPS101;
+value, CSPS102;
+value, CSPS103;
+value, CSPS201;
+value, CSPS202;
+value, CSPS203;
+value, CSPL202;
+value, CSPL203;
+value, CSPL204;
+
+
+
+return;

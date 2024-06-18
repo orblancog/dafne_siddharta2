@@ -1,0 +1,13 @@
+! some usefull values
+grad := beam->brho*table(twiss,k1l)/table(twiss,L);
+grads := beam->brho*table(twiss,k2l)/table(twiss,L);
+grado := beam->brho*table(twiss,k3l);
+gradd := beam->brho*table(twiss,k4l);
+grade := beam->brho*table(twiss,k5l);
+natchromx := table(twiss,k1l)*table(twiss,betx);
+natchromy := table(twiss,k1l)*table(twiss,bety);
+sx_mm := sqrt( beam->ex*table(twiss,betx) + ( table(twiss,dx)*beam->sige )^2 )*1e3;
+sy_mm := sqrt( beam->ey*table(twiss,bety) + ( table(twiss,dy)*beam->sige )^2 )*1e3;
+nsx_mm := sqrt( 10^2*beam->ex*table(twiss,betx) + ( table(twiss,dx)*beam->sige )^2 )*1e3;
+nsy_mm := sqrt( 10^2*beam->ey*table(twiss,bety) + ( table(twiss,dy)*beam->sige )^2 )*1e3;
+SBfield := beam->brho*table(twiss,angle)/table(twiss,L);

@@ -1,0 +1,14 @@
+! the beam 
+E0     := 0.510;![GeV]
+emitx  := 0.28e-6;![m]
+emity  := 2.1e-9;![m] 
+blength:= 16e-3;![m]
+bcur   := 4e-3;![A]
+nbunch := 107;
+nparpb := 8.3e09*2.5;
+espread:= 1e-3;
+beam, PARTICLE=positron, ENERGY=E0,
+      ex=emitx, ey=emity, et=blength*espread,
+      sigt=blength, sige=espread, kbunch=nbunch,
+      NPART=nparpb, bcurrent=bcur, RADIATE=true;
+show, beam;
